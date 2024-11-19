@@ -19,7 +19,15 @@ namespace edi_315_parser_api.Controllers
             if (file == null || file.Length == 0)
                 return BadRequest(new { message = "File is empty or not provided." });
 
-            await _ediParserService.ParseEDIFile(file);
+            try
+            {
+                await _ediParserService.ParseEDIFile(file);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
+
             return Ok(new {message = "successfully parsed."});
         }
     }

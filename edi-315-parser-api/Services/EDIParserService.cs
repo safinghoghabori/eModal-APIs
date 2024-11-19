@@ -84,6 +84,11 @@ namespace edi_315_parser_api.Services
                             TransactionSetIdentifierCode = GetElement(elements, 1),
                             TransactionSetControlNumber = GetElement(elements, 2)
                         };
+
+                        if(transectionSet.ST.TransactionSetIdentifierCode != "315")
+                        {
+                            throw new Exception("Uploaded EDI file is not EDI 315 transaction");
+                        }
                         break;
                     case "B4":
                         transectionSet.B4 = new B4
