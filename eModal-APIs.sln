@@ -5,6 +5,8 @@ VisualStudioVersion = 17.11.35431.28
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "edi-315-parser-api", "edi-315-parser-api\edi-315-parser-api.csproj", "{FFB8046F-F577-4B2F-A372-633A844F15CD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Identity", "Identity\Identity.csproj", "{D5D2D2D3-9104-4EF6-9ABC-933B581CE79B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{FFB8046F-F577-4B2F-A372-633A844F15CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FFB8046F-F577-4B2F-A372-633A844F15CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FFB8046F-F577-4B2F-A372-633A844F15CD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D5D2D2D3-9104-4EF6-9ABC-933B581CE79B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D5D2D2D3-9104-4EF6-9ABC-933B581CE79B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D5D2D2D3-9104-4EF6-9ABC-933B581CE79B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D5D2D2D3-9104-4EF6-9ABC-933B581CE79B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
