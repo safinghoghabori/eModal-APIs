@@ -1,0 +1,6 @@
+@edi_315_parser_api_HostAddress = http://localhost:5059
+
+GET {{edi_315_parser_api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
