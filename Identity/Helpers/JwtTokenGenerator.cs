@@ -14,7 +14,7 @@ namespace Identity.Helpers
             _configuration = configuration;
         }
 
-        public string GenerateToken(string username, string role, int userId)
+        public string GenerateToken(string username, string role, string userId)
         {
             var jwtSettings = _configuration.GetSection("JwtSettings");
 
@@ -24,7 +24,7 @@ namespace Identity.Helpers
                 new Claim(ClaimTypes.Email, username),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(ClaimTypes.Role, role),
-                new Claim(ClaimTypes.Name, userId.ToString()),
+                new Claim(ClaimTypes.Name, userId),
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Key"]));

@@ -25,6 +25,7 @@ namespace Identity
                 options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
             builder.Services.AddScoped<IAuthService, AuthService>();
+            builder.Services.AddScoped<IRegistrationService, RegistrationService>();
             builder.Services.AddSingleton<JwtTokenGenerator>();
 
             // Add JWT Authentication
