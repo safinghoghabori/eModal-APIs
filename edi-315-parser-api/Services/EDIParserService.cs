@@ -26,7 +26,7 @@ namespace edi_315_parser_api.Services
 
             foreach (var ediData in ediDataList) 
             { 
-                string jsonResult = JsonConvert.SerializeObject(ediData, Formatting.Indented);
+                // string jsonResult = JsonConvert.SerializeObject(ediData, Formatting.Indented);
                 // Console.WriteLine(jsonResult);
                 await _container.CreateItemAsync(ediData, new PartitionKey(ediData.PartitionKey));
             }
@@ -40,7 +40,6 @@ namespace edi_315_parser_api.Services
             {
                 PartitionKey = new PartitionKey(containerNo)
             };
-
 
             using FeedIterator<EDI315Data> resultSet = _container.GetItemQueryIterator<EDI315Data>(query, requestOptions: options);
 

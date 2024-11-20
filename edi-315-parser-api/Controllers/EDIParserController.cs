@@ -1,10 +1,12 @@
 ﻿using edi_315_parser_api.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace edi_315_parser_api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class EDIParserController : ControllerBase
     {
         private readonly IEDIParserService _ediParserService;
@@ -42,6 +44,5 @@ namespace edi_315_parser_api.Controllers
 
             return Ok(document);
         }
-
     }
 }
