@@ -30,5 +30,18 @@ namespace edi_315_parser_api.Controllers
 
             return Ok(new {message = "successfully parsed."});
         }
+
+        [HttpGet("container/{containerNo}")]
+        public async Task<IActionResult> GetByContainerNumber(string containerNo)
+        {
+            var document = await _ediParserService.GetEDIDataByContainerNoAsync(containerNo);
+            if (document == null)
+            {
+                return NotFound(new { Message = $"No document found for container number {containerNo}." });
+            }
+
+            return Ok(document);
+        }
+
     }
 }

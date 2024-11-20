@@ -27,9 +27,30 @@ namespace edi_315_parser_api.Services
             foreach (var ediData in ediDataList) 
             { 
                 string jsonResult = JsonConvert.SerializeObject(ediData, Formatting.Indented);
-                Console.WriteLine(jsonResult);
+                // Console.WriteLine(jsonResult);
                 await _container.CreateItemAsync(ediData, new PartitionKey(ediData.PartitionKey));
             }
+        }
+
+        public async Task<EDI315Data> GetEDIDataByContainerNoAsync(string containerNo)
+        {
+            var query = new QueryDefinition("SELECT * FROM c WHERE c.TransectionSet.B4.container_number = @containerNo").WithParameter("@containerNo", containerNo);
+
+            var options = new QueryRequestOptions
+            {
+                PartitionKey = new PartitionKey(containerNo)
+            };
+
+
+            using FeedIterator<EDI315Data> resultSet = _container.GetItemQueryIterator<EDI315Data>(query, requestOptions: options);
+
+            if (resultSet.HasMoreResults)
+            {
+                var response = await resultSet.ReadNextAsync();
+                return response.Resource.FirstOrDefault(); // Return the single matching document
+            }
+
+            return null; // No document found
         }
 
         private static List<EDI315Data> ParseEDI315(List<string> lines)
