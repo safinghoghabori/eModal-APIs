@@ -1,10 +1,7 @@
 using Identity.Database;
 using Identity.Helpers;
 using Identity.Services;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
 
 namespace Identity
 {
@@ -27,27 +24,6 @@ namespace Identity
             builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddScoped<IRegistrationService, RegistrationService>();
             builder.Services.AddSingleton<JwtTokenGenerator>();
-
-            // Add JWT Authentication
-            var jwtSettings = builder.Configuration.GetSection("JwtSettings");
-            builder.Services.AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-            .AddJwtBearer(options =>
-            {
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidateLifetime = true,
-                    ValidateIssuerSigningKey = true,
-                    ValidIssuer = jwtSettings["Issuer"],
-                    ValidAudience = jwtSettings["Audience"],
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Key"]))
-                };
-            });
 
             var app = builder.Build();
 

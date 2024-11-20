@@ -20,7 +20,7 @@ namespace edi_315_parser_api
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            // Add JWT Authentication
+            // Validate JWT Token for each upcoming requests
             var jwtSettings = builder.Configuration.GetSection("JwtSettings");
             builder.Services.AddAuthentication(options =>
             {
@@ -51,8 +51,8 @@ namespace edi_315_parser_api
             }
 
             app.UseHttpsRedirection();
-            app.UseAuthentication();
-            app.UseAuthorization();
+            app.UseAuthentication(); // To authenticate the incoming requests
+            app.UseAuthorization(); // To authorize based on user roles or policies
             app.MapControllers();
 
             app.Run();
@@ -72,6 +72,5 @@ namespace edi_315_parser_api
             var cosmosDbService = new EDIParserService(client, databaseName, containerName);
             return cosmosDbService;
         }
-
     }
 }
