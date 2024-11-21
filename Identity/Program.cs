@@ -17,6 +17,18 @@ namespace Identity
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            // Add CORS policy
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAllOrigins",
+                    builder =>
+                    {
+                        builder.AllowAnyOrigin()  // Allow all origins
+                               .AllowAnyHeader()  // Allow any header
+                               .AllowAnyMethod(); // Allow any method
+                    });
+            });
+
             // Register the DbContext using the connection string from the configuration
             builder.Services.AddDbContext<ApplicationDBContext>(
                 options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -35,6 +47,8 @@ namespace Identity
             }
 
             app.UseHttpsRedirection();
+            // Use CORS policy
+            app.UseCors("AllowAllOrigins");
             app.UseAuthorization();
             app.MapControllers();
 
