@@ -1,4 +1,5 @@
-﻿using edi_315_parser_api.Models;
+﻿using edi_315_parser_api.DTOs;
+using edi_315_parser_api.Models;
 using Microsoft.Azure.Cosmos;
 using Newtonsoft.Json;
 
@@ -32,7 +33,7 @@ namespace edi_315_parser_api.Services
             }
         }
 
-        public async Task<EDI315Data> GetEDIDataByContainerNoAsync(string containerNo)
+        public async Task<EDIRespDTO> GetEDIDataByContainerNoAsync(string containerNo)
         {
             var query = new QueryDefinition("SELECT * FROM c WHERE c.TransectionSet.B4.container_number = @containerNo").WithParameter("@containerNo", containerNo);
 
@@ -46,10 +47,95 @@ namespace edi_315_parser_api.Services
             if (resultSet.HasMoreResults)
             {
                 var response = await resultSet.ReadNextAsync();
-                return response.Resource.FirstOrDefault(); // Return the single matching document
+                var res = response.Resource.FirstOrDefault(); // Return the single matching document
+
+                // Return customised response using DTO
+                return new EDIRespDTO
+                {
+                    Id = res.Id,
+                    TransactionIdentifierCode = res.TransectionSet.ST.TransactionSetIdentifierCode,
+                    LastFreeDate = null,
+                    GoodThroughDate = null,
+                    EDIHeader = new EDIHeader
+                    {
+                        Sender = res.ISA.InterchangeSenderId,
+                        Receiver = res.ISA.InterchangeReceiverId,
+                        TransactionDateTime = res.ISA.InterchangeDateTime
+                    },
+                    ContainerInfo = new ContainerInfo
+                    {
+                        ShipmentStatusCode = res.TransectionSet.B4.ShipmentStatusCode,
+                        ShipmentStatusDesc = res.TransectionSet.B4.ShipmentStatusCodeDescription,
+                        ContainerNumber = res.TransectionSet.B4.ContainerNumber,
+                        ContainerStatusCode = res.TransectionSet.B4.EquipmentStatusCode,
+                        ContainerStatusDesc = res.TransectionSet.B4.EquipmentStatusCode,
+                        ContainerType = res.TransectionSet.B4.EquipmentType,
+                        ContainerTypeDesc = res.TransectionSet.B4.EquipmentTypeDescription
+                    },
+                    FeesInfo = CalculateFees(res.TransectionSet.N9),
+                    VesselInfo = new VesselInfo
+                    {
+                        Code = res.TransectionSet.Q2.VesselCode,
+                        Name = res.TransectionSet.Q2.VesselName,
+                        Weight = res.TransectionSet.Q2.Weight,
+                        Number = res.TransectionSet.Q2.VoyageNumber,
+                    },
+                    ShipmentStatuses = GetShipmentStatuses(res.TransectionSet.ShipmentStatus),
+                    PortTerminals = GetPortTerminalInfo(res.TransectionSet.PortTerminal)
+                };
             }
 
             return null; // No document found
+        }
+
+        // Calculate total fees
+        private static FeesInfo CalculateFees(List<N9> n9s)
+        {
+            int totalFees = 0;
+            List<string> feesCodes = new List<string> { "4I", "4I1", "4I2", "IGF" };
+
+            foreach(var n9 in n9s)
+            {
+                if(feesCodes.Contains(n9.ReferenceQualifier))
+                {
+                    totalFees += Convert.ToInt32(n9.ReferenceIdentification);
+                }
+            }
+
+            return new FeesInfo
+            {
+                Fees = null,
+                TotalFees = totalFees
+            };
+        }
+
+        private static List<ShipmentStatusInfo> GetShipmentStatuses(List<ShipmentStatus> shipmentStatuses) 
+        {
+            List<ShipmentStatusInfo> shipmentStatusInfo = new List<ShipmentStatusInfo>();
+            foreach (var shipmentStatus in shipmentStatuses)
+            {
+                shipmentStatusInfo.Add(new ShipmentStatusInfo() { Code = shipmentStatus.ShipmentStatusCode, Desc = shipmentStatus.ShipmentStatusCodeDescription, DateTime = shipmentStatus.ShipmentDateTime });
+            }
+
+            return shipmentStatusInfo;
+        }
+
+        private static List<PortTerminalInfo> GetPortTerminalInfo(List<PortTerminal> portTerminals)
+        {
+            List<PortTerminalInfo> portTerminalInfos = new List<PortTerminalInfo>();
+            foreach (var info in portTerminals)
+            {
+                portTerminalInfos.Add(new PortTerminalInfo() { 
+                    PortCode = info.PortFunctionCode, 
+                    PortDesc = info.PortFunctionCodeDescription, 
+                    CountryCode = info.CountryCode, 
+                    PortName = info.PortName,
+                    StateOrProvinceCode = info.StateOrProvinceCode,
+                    TerminalName = info.TerminalName,
+                });
+            }
+            
+            return portTerminalInfos;
         }
 
         private static List<EDI315Data> ParseEDI315(List<string> lines)

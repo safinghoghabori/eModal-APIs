@@ -1,10 +1,10 @@
-﻿using edi_315_parser_api.Models;
+﻿using edi_315_parser_api.DTOs;
 
 namespace edi_315_parser_api.Services
 {
     public interface IEDIParserService
     {
         Task ParseEDIFile(IFormFile file);
-        Task<EDI315Data> GetEDIDataByContainerNoAsync(string containerNo);
+        Task<EDIRespDTO> GetEDIDataByContainerNoAsync(string containerNo);
     }
 }
