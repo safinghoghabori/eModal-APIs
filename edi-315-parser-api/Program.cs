@@ -20,6 +20,18 @@ namespace edi_315_parser_api
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            // Add CORS policy
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAllOrigins",
+                    builder =>
+                    {
+                        builder.AllowAnyOrigin()  // Allow all origins
+                               .AllowAnyHeader()  // Allow any header
+                               .AllowAnyMethod(); // Allow any method
+                    });
+            });
+
             // Validate JWT Token for each upcoming requests
             var jwtSettings = builder.Configuration.GetSection("JwtSettings");
             builder.Services.AddAuthentication(options =>
@@ -52,6 +64,8 @@ namespace edi_315_parser_api
 
             app.UseHttpsRedirection();
             app.UseAuthentication(); // To authenticate the incoming requests
+            // Use CORS policy
+            app.UseCors("AllowAllOrigins");
             app.UseAuthorization(); // To authorize based on user roles or policies
             app.MapControllers();
 
