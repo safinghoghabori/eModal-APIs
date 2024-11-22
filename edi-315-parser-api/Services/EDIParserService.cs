@@ -35,11 +35,12 @@ namespace edi_315_parser_api.Services
 
         public async Task<EDIRespDTO> GetEDIDataByContainerNoAsync(string containerNo)
         {
-            var query = new QueryDefinition("SELECT * FROM c WHERE c.TransectionSet.B4.container_number = @containerNo").WithParameter("@containerNo", containerNo);
+            string upperCaseContainerNo = containerNo.ToUpper();
+            var query = new QueryDefinition("SELECT * FROM c WHERE c.TransectionSet.B4.container_number = @containerNo").WithParameter("@containerNo", upperCaseContainerNo);
 
             var options = new QueryRequestOptions
             {
-                PartitionKey = new PartitionKey(containerNo)
+                PartitionKey = new PartitionKey(upperCaseContainerNo)
             };
 
             using FeedIterator<EDI315Data> resultSet = _container.GetItemQueryIterator<EDI315Data>(query, requestOptions: options);
@@ -49,40 +50,43 @@ namespace edi_315_parser_api.Services
                 var response = await resultSet.ReadNextAsync();
                 var res = response.Resource.FirstOrDefault(); // Return the single matching document
 
-                // Return customised response using DTO
-                return new EDIRespDTO
+                if(res != null)
                 {
-                    Id = res.Id,
-                    TransactionIdentifierCode = res.TransectionSet.ST.TransactionSetIdentifierCode,
-                    LastFreeDate = null,
-                    GoodThroughDate = null,
-                    EDIHeader = new EDIHeader
+                    // Return customised response using DTO
+                    return new EDIRespDTO
                     {
-                        Sender = res.ISA.InterchangeSenderId,
-                        Receiver = res.ISA.InterchangeReceiverId,
-                        TransactionDateTime = res.ISA.InterchangeDateTime
-                    },
-                    ContainerInfo = new ContainerInfo
-                    {
-                        ShipmentStatusCode = res.TransectionSet.B4.ShipmentStatusCode,
-                        ShipmentStatusDesc = res.TransectionSet.B4.ShipmentStatusCodeDescription,
-                        ContainerNumber = res.TransectionSet.B4.ContainerNumber,
-                        ContainerStatusCode = res.TransectionSet.B4.EquipmentStatusCode,
-                        ContainerStatusDesc = res.TransectionSet.B4.EquipmentStatusCode,
-                        ContainerType = res.TransectionSet.B4.EquipmentType,
-                        ContainerTypeDesc = res.TransectionSet.B4.EquipmentTypeDescription
-                    },
-                    FeesInfo = CalculateFees(res.TransectionSet.N9),
-                    VesselInfo = new VesselInfo
-                    {
-                        Code = res.TransectionSet.Q2.VesselCode,
-                        Name = res.TransectionSet.Q2.VesselName,
-                        Weight = res.TransectionSet.Q2.Weight,
-                        Number = res.TransectionSet.Q2.VoyageNumber,
-                    },
-                    ShipmentStatuses = GetShipmentStatuses(res.TransectionSet.ShipmentStatus),
-                    PortTerminals = GetPortTerminalInfo(res.TransectionSet.PortTerminal)
-                };
+                        Id = res.Id,
+                        TransactionIdentifierCode = res.TransectionSet.ST.TransactionSetIdentifierCode,
+                        LastFreeDate = null,
+                        GoodThroughDate = null,
+                        EDIHeader = new EDIHeader
+                        {
+                            Sender = res.ISA.InterchangeSenderId,
+                            Receiver = res.ISA.InterchangeReceiverId,
+                            TransactionDateTime = res.ISA.InterchangeDateTime
+                        },
+                        ContainerInfo = new ContainerInfo
+                        {
+                            ShipmentStatusCode = res.TransectionSet.B4.ShipmentStatusCode,
+                            ShipmentStatusDesc = res.TransectionSet.B4.ShipmentStatusCodeDescription,
+                            ContainerNumber = res.TransectionSet.B4.ContainerNumber,
+                            ContainerStatusCode = res.TransectionSet.B4.EquipmentStatusCode,
+                            ContainerStatusDesc = res.TransectionSet.B4.EquipmentStatusCodeDescription,
+                            ContainerType = res.TransectionSet.B4.EquipmentType,
+                            ContainerTypeDesc = res.TransectionSet.B4.EquipmentTypeDescription
+                        },
+                        FeesInfo = CalculateFees(res.TransectionSet.N9),
+                        VesselInfo = new VesselInfo
+                        {
+                            Code = res.TransectionSet.Q2.VesselCode,
+                            Name = res.TransectionSet.Q2.VesselName,
+                            Weight = res.TransectionSet.Q2.Weight,
+                            Number = res.TransectionSet.Q2.VoyageNumber,
+                        },
+                        ShipmentStatuses = GetShipmentStatuses(res.TransectionSet.ShipmentStatus),
+                        PortTerminals = GetPortTerminalInfo(res.TransectionSet.PortTerminal)
+                    };
+                }
             }
 
             return null; // No document found
