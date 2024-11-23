@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "edi-315-parser-api", "edi-3
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Identity", "Identity\Identity.csproj", "{D5D2D2D3-9104-4EF6-9ABC-933B581CE79B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Payment.API", "Payment.API\Payment.API.csproj", "{1B644A36-2075-472E-BD00-8E0A2E92230E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{D5D2D2D3-9104-4EF6-9ABC-933B581CE79B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D5D2D2D3-9104-4EF6-9ABC-933B581CE79B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D5D2D2D3-9104-4EF6-9ABC-933B581CE79B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1B644A36-2075-472E-BD00-8E0A2E92230E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1B644A36-2075-472E-BD00-8E0A2E92230E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1B644A36-2075-472E-BD00-8E0A2E92230E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1B644A36-2075-472E-BD00-8E0A2E92230E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
