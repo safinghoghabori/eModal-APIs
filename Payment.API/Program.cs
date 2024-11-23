@@ -1,4 +1,6 @@
 
+using Payment.API.Services;
+
 namespace Payment.API
 {
     public class Program
@@ -7,10 +9,14 @@ namespace Payment.API
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
+            // Register Payment Services
+            builder.Services.AddScoped<IPaymentProcessor, PaymentProcessor>();
+            builder.Services.AddScoped<IPaymentService, PaymentService>();
+
+            // Register Azure Service Bus Client
+            builder.Services.AddScoped<IAzureServiceBusClient, AzureServiceBusClient>();
 
             builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
