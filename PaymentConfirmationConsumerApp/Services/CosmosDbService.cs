@@ -24,8 +24,9 @@ namespace PaymentConfirmationConsumerApp.Services
             try
             {
                 string documentId = paymentConfirmation.EdiFileId;
+                string partitionKey = paymentConfirmation.ContainerNumber;
                 
-                var response = await _container.ReadItemAsync<dynamic>(documentId, new PartitionKey(paymentConfirmation.ContainerNumber));
+                var response = await _container.ReadItemAsync<dynamic>(documentId, new PartitionKey(partitionKey));
                 var document = response.Resource;
 
                 if (document?.ContainerFees != null)
@@ -34,7 +35,7 @@ namespace PaymentConfirmationConsumerApp.Services
                     document.ContainerFees.is_fees_paid = true;
 
                     // Replace the document with the updated one
-                    var upsertResponse = await _container.ReplaceItemAsync(document, documentId, new PartitionKey(documentId));
+                    var upsertResponse = await _container.ReplaceItemAsync(document, documentId, new PartitionKey(partitionKey));
                     Console.WriteLine("Document updated successfully.");
                 }
                 else
