@@ -182,7 +182,6 @@ namespace edi_315_parser_api.Services
                     case "ST":
                         transectionSet = new TransectionSet();
                         containerFees = new ContainerFees();
-                        totalFees = 0;
 
                         transectionSet.ST = new ST
                         {
@@ -286,11 +285,13 @@ namespace edi_315_parser_api.Services
                         ediData.GS = gs;
                         ediData.TransectionSet = transectionSet;
                         ediData.ContainerFees = containerFees;
+                        ediData.ContainerFees.IsFeesPaid = totalFees == 0;
 
                         ediDataList.Add(ediData);
                         transectionSet = null;
                         ediData = null;
                         containerFees = null;
+                        totalFees = 0;
                         break;
                     default:
                         break;
