@@ -1,7 +1,7 @@
 ﻿using edi_315_parser_api.DTOs;
 using edi_315_parser_api.Models;
 using Microsoft.Azure.Cosmos;
-using Newtonsoft.Json;
+//using Newtonsoft.Json;
 
 namespace edi_315_parser_api.Services
 {
@@ -75,7 +75,17 @@ namespace edi_315_parser_api.Services
                             ContainerType = res.TransectionSet.B4.EquipmentType,
                             ContainerTypeDesc = res.TransectionSet.B4.EquipmentTypeDescription
                         },
-                        FeesInfo = CalculateFees(res.TransectionSet.N9),
+                        ContainerFeesInfo = new ContainerFeesInfo
+                        {
+                            Fees = res.ContainerFees.Fees.Select(fee => new FeeDesc
+                            {
+                                Type = fee.Type,
+                                Desc = fee.Desc,
+                                Value = fee.Value
+                            }).ToList(),
+                            TotalFees = res.ContainerFees.TotalFees,
+                            IsFeesPaid = res.ContainerFees.IsFeesPaid
+                        },
                         VesselInfo = new VesselInfo
                         {
                             Code = res.TransectionSet.Q2.VesselCode,
@@ -90,27 +100,6 @@ namespace edi_315_parser_api.Services
             }
 
             return null; // No document found
-        }
-
-        // Calculate total fees
-        private static FeesInfo CalculateFees(List<N9> n9s)
-        {
-            int totalFees = 0;
-            List<string> feesCodes = new List<string> { "4I", "4I1", "4I2", "IGF" };
-
-            foreach(var n9 in n9s)
-            {
-                if(feesCodes.Contains(n9.ReferenceQualifier))
-                {
-                    totalFees += Convert.ToInt32(n9.ReferenceIdentification);
-                }
-            }
-
-            return new FeesInfo
-            {
-                Fees = null,
-                TotalFees = totalFees
-            };
         }
 
         private static List<ShipmentStatusInfo> GetShipmentStatuses(List<ShipmentStatus> shipmentStatuses) 
@@ -150,6 +139,10 @@ namespace edi_315_parser_api.Services
             ISA isa = null;
             GS gs = null;
             TransectionSet transectionSet = null;
+            ContainerFees containerFees = null;
+
+            int totalFees = 0;
+            List<string> feesCodes = new List<string> { "4I", "4I1", "4I2", "IGF" };
 
             foreach (var line in lines)
             {
@@ -188,6 +181,8 @@ namespace edi_315_parser_api.Services
                         break;
                     case "ST":
                         transectionSet = new TransectionSet();
+                        containerFees = new ContainerFees();
+                        totalFees = 0;
 
                         transectionSet.ST = new ST
                         {
@@ -215,13 +210,34 @@ namespace edi_315_parser_api.Services
                         };
                         break;
                     case "N9":
-                        var n9 = new N9
+                        var N9Type = GetElement(elements, 1);
+                        var N9Desc = GetReferenceDescription(GetElement(elements, 1));
+                        var N9Value = GetElement(elements, 2);
+
+                        // Process Fees information from N9 segment
+                        if (feesCodes.Contains(N9Type))
                         {
-                            ReferenceQualifier = GetElement(elements, 1),
-                            ReferenceQualifierDescription = GetReferenceDescription(GetElement(elements, 1)),
-                            ReferenceIdentification = GetElement(elements, 2)
-                        };
-                        transectionSet.N9.Add(n9);
+                            var fee = new Fee()
+                            {
+                                Type = N9Type,
+                                Desc = N9Desc,
+                                Value = N9Value
+                            };
+                            totalFees += Convert.ToInt32(N9Value);
+                            containerFees.Fees.Add(fee);
+                            containerFees.TotalFees = totalFees;
+                        } 
+                        // Process Other info from N9 segment
+                        else
+                        {
+                            var n9 = new N9
+                            {
+                                ReferenceQualifier = N9Type,
+                                ReferenceQualifierDescription = N9Desc,
+                                ReferenceIdentification = N9Value
+                            };
+                            transectionSet.N9.Add(n9);
+                        }
                         break;
                     case "Q2":
                         transectionSet.Q2 = new Q2
@@ -269,10 +285,12 @@ namespace edi_315_parser_api.Services
                         ediData.ISA = isa;
                         ediData.GS = gs;
                         ediData.TransectionSet = transectionSet;
+                        ediData.ContainerFees = containerFees;
 
                         ediDataList.Add(ediData);
                         transectionSet = null;
                         ediData = null;
+                        containerFees = null;
                         break;
                     default:
                         break;

@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-
-namespace edi_315_parser_api.DTOs
+﻿namespace edi_315_parser_api.DTOs
 {
     public class EDIRespDTO
     {
@@ -10,7 +8,7 @@ namespace edi_315_parser_api.DTOs
         public DateTime? GoodThroughDate { get; set; }
         public EDIHeader EDIHeader { get; set; }
         public ContainerInfo ContainerInfo { get; set; }
-        public FeesInfo FeesInfo { get; set; }
+        public ContainerFeesInfo ContainerFeesInfo { get; set; }
         public VesselInfo VesselInfo { get; set; }
         public List<ShipmentStatusInfo> ShipmentStatuses { get; set; }
         public List<PortTerminalInfo> PortTerminals { get; set; }
@@ -34,13 +32,14 @@ namespace edi_315_parser_api.DTOs
         public string ContainerTypeDesc { get; set; }
     }
 
-    public class FeesInfo
+    public class ContainerFeesInfo
     {
-        public List<Fee> Fees { get; set; }
+        public List<FeeDesc> Fees { get; set; }
         public int TotalFees { get; set; }
+        public bool IsFeesPaid { get; set; }
     }
 
-    public class Fee
+    public class FeeDesc
     {
         public string Type { get; set; }
         public string Desc { get; set; }
@@ -71,9 +70,4 @@ namespace edi_315_parser_api.DTOs
         public string CountryCode { get; set; }
         public string StateOrProvinceCode { get; set; }
     }
-
-    //public class TransactionHeader
-    //{
-    //    public string Code {  get; set; }
-    //}
 }

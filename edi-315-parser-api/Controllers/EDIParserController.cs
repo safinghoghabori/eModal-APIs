@@ -39,7 +39,7 @@ namespace edi_315_parser_api.Controllers
             var document = await _ediParserService.GetEDIDataByContainerNoAsync(containerNo);
             if (document == null)
             {
-                return NotFound(new { Message = $"No document found for container number {containerNo}." });
+                return NotFound(new { Message = $"Container not found, kindly check the number is correct or visit again after some time." });
             }
 
             return Ok(document);

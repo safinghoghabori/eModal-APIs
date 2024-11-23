@@ -11,5 +11,6 @@ namespace edi_315_parser_api.Models
         public ISA ISA { get; set; }
         public GS GS { get; set; }
         public TransectionSet TransectionSet { get; set; }
+        public ContainerFees ContainerFees { get; set; }
     }
 }
