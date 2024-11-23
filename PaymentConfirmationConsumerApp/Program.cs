@@ -32,6 +32,9 @@ namespace PaymentConfirmationConsumerApp
             // Register the DbContext using the connection string 
             services.AddDbContext<ApplicationDBContext>(
                 options => options.UseSqlServer(_deafultSqlConnectionString));
+
+            // Register CosmosDB service
+            services.AddSingleton<ICosmosDbService, CosmosDbService>();
         });
     }
 }
