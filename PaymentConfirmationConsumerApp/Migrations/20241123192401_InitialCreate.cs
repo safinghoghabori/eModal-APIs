@@ -19,6 +19,7 @@ namespace PaymentConfirmationConsumerApp.Migrations
                     UserId = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     EdiFileId = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Amount = table.Column<int>(type: "int", nullable: false),
+                    ContainerNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IsSuccessful = table.Column<bool>(type: "bit", nullable: false),
                     TransactionId = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PaymentDate = table.Column<DateTime>(type: "datetime2", nullable: false)

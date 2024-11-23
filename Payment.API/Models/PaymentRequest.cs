@@ -5,5 +5,6 @@
         public string UserId { get; set; }
         public int Amount { get; set; }
         public string EdiFileId { get; set; }  
+        public string ContainerNumber { get; set; }
     }
 }

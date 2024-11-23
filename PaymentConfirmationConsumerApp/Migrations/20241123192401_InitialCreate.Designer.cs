@@ -12,7 +12,7 @@ using PaymentConfirmationConsumerApp.Databases;
 namespace PaymentConfirmationConsumerApp.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    [Migration("20241123182207_InitialCreate")]
+    [Migration("20241123192401_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -33,6 +33,10 @@ namespace PaymentConfirmationConsumerApp.Migrations
 
                     b.Property<int>("Amount")
                         .HasColumnType("int");
+
+                    b.Property<string>("ContainerNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("EdiFileId")
                         .IsRequired()

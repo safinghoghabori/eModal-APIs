@@ -31,6 +31,10 @@ namespace PaymentConfirmationConsumerApp.Migrations
                     b.Property<int>("Amount")
                         .HasColumnType("int");
 
+                    b.Property<string>("ContainerNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("EdiFileId")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");

@@ -1,6 +1,5 @@
 ﻿using Microsoft.Azure.Cosmos;
 using PaymentConfirmationConsumerApp.Models;
-using System.Reflection.Metadata;
 
 namespace PaymentConfirmationConsumerApp.Services
 {
@@ -25,7 +24,8 @@ namespace PaymentConfirmationConsumerApp.Services
             try
             {
                 string documentId = paymentConfirmation.EdiFileId;
-                var response = await _container.ReadItemAsync<dynamic>(documentId, new PartitionKey(documentId));
+                
+                var response = await _container.ReadItemAsync<dynamic>(documentId, new PartitionKey(paymentConfirmation.ContainerNumber));
                 var document = response.Resource;
 
                 if (document?.ContainerFees != null)

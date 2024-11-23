@@ -21,6 +21,7 @@ namespace Payment.API.Services
                 UserId = paymentRequest.UserId,
                 EdiFileId = paymentRequest.EdiFileId,
                 Amount = paymentRequest.Amount,
+                ContainerNumber = paymentRequest.ContainerNumber,
                 IsSuccessful = true, 
                 TransactionId = Guid.NewGuid().ToString(),
                 PaymentDate = DateTime.UtcNow
