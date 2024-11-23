@@ -32,10 +32,10 @@ namespace PaymentConfirmationConsumerApp.Services
             await processor.DisposeAsync();
         }
 
-        static async Task MessageHandler(ProcessMessageEventArgs args)
+        private async Task MessageHandler(ProcessMessageEventArgs args)
         {
             var paymentInfo = System.Text.Json.JsonSerializer.Deserialize<PaymentConfirmation>(args.Message.Body.ToString());
-            Console.WriteLine($"payment uid: {paymentInfo.UserId}, successful: {paymentInfo.IsSuccessful}");
+            await _paymentConfirmationHandler.HandlePaymentConfirmationAsync(paymentInfo);
 
             // Simulate payment processing
             await Task.Delay(1000);
@@ -43,7 +43,7 @@ namespace PaymentConfirmationConsumerApp.Services
             await args.CompleteMessageAsync(args.Message);
         }
 
-        static Task ErrorHandler(ProcessErrorEventArgs args)
+        private Task ErrorHandler(ProcessErrorEventArgs args)
         {
             Console.WriteLine(args.Exception.ToString());
             return Task.CompletedTask;
