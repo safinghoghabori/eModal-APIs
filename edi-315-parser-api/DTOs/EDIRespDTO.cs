@@ -4,6 +4,7 @@
     {
         public string Id { get; set; }
         public string TransactionIdentifierCode { get; set; }
+        public string Line { get; set; }
         public DateTime? LastFreeDate { get; set; }
         public DateTime? GoodThroughDate { get; set; }
         public EDIHeader EDIHeader { get; set; }

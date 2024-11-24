@@ -57,6 +57,7 @@ namespace edi_315_parser_api.Services
                     {
                         Id = res.Id,
                         TransactionIdentifierCode = res.TransectionSet.ST.TransactionSetIdentifierCode,
+                        Line = res.Line,
                         LastFreeDate = null,
                         GoodThroughDate = null,
                         EDIHeader = new EDIHeader
@@ -180,6 +181,7 @@ namespace edi_315_parser_api.Services
                         };
                         break;
                     case "ST":
+                        ediData = new EDI315Data();
                         transectionSet = new TransectionSet();
                         containerFees = new ContainerFees();
 
@@ -227,6 +229,10 @@ namespace edi_315_parser_api.Services
                             containerFees.TotalFees = totalFees;
                         } 
                         // Process Other info from N9 segment
+                        else if(N9Type == "SCA" || N9Type == "SCAC")
+                        {
+                            ediData.Line = N9Value;
+                        }
                         else
                         {
                             var n9 = new N9
@@ -278,8 +284,6 @@ namespace edi_315_parser_api.Services
                         transectionSet.PortTerminal.Add(portTerminalInfo);
                         break;
                     case "SE":
-                        ediData = new EDI315Data();
-
                         ediData.PartitionKey = transectionSet.B4.ContainerNumber;
                         ediData.ISA = isa;
                         ediData.GS = gs;
