@@ -1,5 +1,7 @@
-
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using Payment.API.Services;
+using System.Text;
 
 namespace Payment.API
 {
@@ -20,6 +22,28 @@ namespace Payment.API
                                .AllowAnyMethod(); // Allow any method
                     });
             });
+
+            // Validate JWT Token for each upcoming requests
+            var jwtSettings = builder.Configuration.GetSection("JwtSettings");
+            builder.Services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = jwtSettings["Issuer"],
+                    ValidAudience = jwtSettings["Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Key"]))
+                };
+            });
+
 
             // Register Payment Services
             builder.Services.AddScoped<IPaymentProcessor, PaymentProcessor>();
@@ -42,6 +66,7 @@ namespace Payment.API
             }
 
             app.UseHttpsRedirection();
+            app.UseAuthentication();
 
             // Use CORS policy
             app.UseCors("AllowAllOrigins");
