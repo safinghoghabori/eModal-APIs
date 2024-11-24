@@ -9,6 +9,18 @@ namespace Payment.API
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            // Add CORS policy
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAllOrigins",
+                    builder =>
+                    {
+                        builder.AllowAnyOrigin()  // Allow all origins
+                               .AllowAnyHeader()  // Allow any header
+                               .AllowAnyMethod(); // Allow any method
+                    });
+            });
+
             // Register Payment Services
             builder.Services.AddScoped<IPaymentProcessor, PaymentProcessor>();
             builder.Services.AddScoped<IPaymentService, PaymentService>();
@@ -31,9 +43,10 @@ namespace Payment.API
 
             app.UseHttpsRedirection();
 
+            // Use CORS policy
+            app.UseCors("AllowAllOrigins");
+
             app.UseAuthorization();
-
-
             app.MapControllers();
 
             app.Run();
