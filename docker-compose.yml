@@ -1,0 +1,27 @@
+services:
+  edi-315-parser-api:
+    build:
+      context: ./edi-315-parser-api
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    container_name: edi-315-parser-container
+  identity:
+    build:
+      context: ./Identity
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8080"
+    container_name: identity-container
+  payment-api:
+    build:
+      context: ./Payment.API
+      dockerfile: Dockerfile
+    ports:
+      - "8082:8080"
+    container_name: payment-api-container
+  payment-confirmation-consumer-app:
+    build:
+      context: ./PaymentConfirmationConsumerApp
+      dockerfile: Dockerfile
+    container_name: payment-confirmation-consumer-app-container
