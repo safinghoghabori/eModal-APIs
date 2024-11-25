@@ -27,10 +27,10 @@ namespace edi_315_parser_api.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new { error = ex.Message });
+                return BadRequest(new { message = ex.Message });
             }
 
-            return Ok(new {message = "successfully parsed."});
+            return Ok(new {message = "File has been uploaded and parsed successfully."});
         }
 
         [HttpGet("container/{containerNo}")]
