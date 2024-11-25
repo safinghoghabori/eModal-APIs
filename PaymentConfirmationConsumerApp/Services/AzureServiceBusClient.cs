@@ -25,8 +25,8 @@ namespace PaymentConfirmationConsumerApp.Services
 
             await processor.StartProcessingAsync();
 
-            Console.WriteLine("Press any key to stop the worker.");
-            Console.ReadKey();
+            // This ensures the application doesn't exit until the user stops it manually (Ctrl+C)
+            await Task.Delay(Timeout.Infinite);
 
             await processor.StopProcessingAsync();
             await processor.DisposeAsync();
