@@ -25,3 +25,10 @@ services:
       context: ./PaymentConfirmationConsumerApp
       dockerfile: Dockerfile
     container_name: payment-confirmation-consumer-app-container
+  gateway-webapi:
+    build:
+      context: ./Gateway.API
+      dockerfile: Dockerfile
+    container_name: api-gateway-container
+    ports:
+      - "5000:8080"
