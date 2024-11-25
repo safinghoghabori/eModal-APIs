@@ -16,7 +16,7 @@
       ]
     },
     {
-      "UpstreamPathTemplate": "/gateway/ediparser/{containerNo}",
+      "UpstreamPathTemplate": "/gateway/container/{containerNo}",
       "UpstreamHttpMethod": [ "GET" ],
       "DownstreamPathTemplate": "/api/ediparser/container/{containerNo}",
       "DownstreamScheme": "http",
