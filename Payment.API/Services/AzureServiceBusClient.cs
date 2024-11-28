@@ -1,5 +1,6 @@
 ﻿using Azure.Messaging.ServiceBus;
 using Payment.API.Models;
+using System.Text.Json;
 
 namespace Payment.API.Services
 {
@@ -12,7 +13,7 @@ namespace Payment.API.Services
         {
             await using var client = new ServiceBusClient(_serviceBusConnectionString);
             var sender = client.CreateSender(_queueName);
-            var message = new ServiceBusMessage(System.Text.Json.JsonSerializer.Serialize(paymentConfirmation));
+            var message = new ServiceBusMessage(JsonSerializer.Serialize(paymentConfirmation));
             await sender.SendMessageAsync(message);
         }
     }

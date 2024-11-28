@@ -27,6 +27,5 @@ namespace Payment.API.Services
                 PaymentDate = DateTime.UtcNow
             };
         }
-
     }
 }
